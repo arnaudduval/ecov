@@ -2,10 +2,15 @@
 Model for a member
 """
 
-from sqlalchemy import Column, Date, String, DateTime, Integer
+import enum
+from sqlalchemy import Column, Date, String, DateTime, Integer, Enum
 from sqlalchemy.sql import func
 
 from app.core.database import Base
+
+class Gender(enum.Enum):
+    MALE = "M"
+    FEMALE = "F"
 
 class Member(Base):
     __tablename__ = "members"
@@ -16,6 +21,7 @@ class Member(Base):
     last_name = Column(String)
 
     birthdate = Column(Date)
+    gender = Column(Enum(Gender))
 
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(),

@@ -23,11 +23,11 @@ members_views = APIRouter()
                     response_model=MemberSchema)
 async def member_create(member_create: MemberCreate,
                          db: Session = Depends(get_db)):
-    print(member_create)
     member = Member(
         first_name=member_create.first_name,
         last_name=member_create.last_name,
         birthdate=member_create.birthdate,
+        gender=member_create.gender
     )
     db.add(member)
     db.commit()
@@ -51,15 +51,18 @@ async def member_create(request: Request,
             member = Member(
                 first_name=form.first_name,
                 last_name=form.last_name,
-                birthdate=datetime.datetime.strptime(form.birthdate, "%Y-%m-%d").date()
+                birthdate=datetime.datetime.strptime(form.birthdate, "%Y-%m-%d").date(),
+                gender=form.gender
             )
             db.add(member)
             db.commit()
             db.refresh(member)
         except Exception as e:
-            print(e)
+            print('e=', e)
             form.__dict__.get("errors").append(
                 "You might not be logged in."
             )
+
     return templates.TemplateResponse(request,
-                                      "create_member.html")
+                                      "create_member.html",
+                                       {"errors": form.errors})
