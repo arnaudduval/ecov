@@ -2,9 +2,12 @@
 Schema for a member
 """
 
-from pydantic import BaseModel
+from typing import List
 from datetime import date, datetime
-from app.models.member import Gender
+from pydantic import BaseModel
+
+from app.models.member import Gender, Federation
+
 
 class MemberBase(BaseModel):
     """Class containing basic data for a member"""
@@ -14,7 +17,7 @@ class MemberBase(BaseModel):
     gender: Gender
 
 class Member(MemberBase):
-    """Class containing member data"""
+    # Class containing all member data
     id: int
     created_at: datetime
     updated_at: datetime
@@ -26,3 +29,13 @@ class MemberCreate(MemberBase):
 class MemberUpdate(MemberBase):
     """Class for member update"""
     pass
+
+class LicenseBase(BaseModel):
+    federation: Federation
+    number: int
+
+class LicenseCreate(LicenseBase):
+    member_id: int
+
+class MemberWithLicenses(MemberBase):
+    licenses: List[LicenseBase] = []

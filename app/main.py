@@ -2,15 +2,18 @@
 Application entry point
 """
 
-from fastapi import Depends, FastAPI, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
 
-from app.core.config import settings, templates
+from fastapi import FastAPI
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
 from app.core.database import Base, engine
+from app.core.config import settings, templates
 from app.routers.member import members_views
 
-app=FastAPI()
+
+app = FastAPI()
 
 app.mount("/public", StaticFiles(directory=settings.STATIC_FILES_DIR), name="static")
 
