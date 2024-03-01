@@ -55,13 +55,13 @@ def read_member_with_licenses(*, member_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="member not found")
     return member
 
-@members_views.get("/members/create/")
+@members_views.get("/members/create/", include_in_schema=False)
 async def member_create(request: Request,
                         db: Session = Depends(get_db)):
     return templates.TemplateResponse("create_member.html",
                                       {"request": request})
 
-@members_views.post("/members/create/")
+@members_views.post("/members/create/", include_in_schema=False)
 async def member_create(request: Request,
                         db: Session = Depends(get_db)):
     form = MemberCreateForm(request)

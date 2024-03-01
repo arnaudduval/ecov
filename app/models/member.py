@@ -4,7 +4,8 @@ Model for a member
 
 import enum
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Enum
+from sqlalchemy import (Column, Integer, String,
+                        ForeignKey, Date, DateTime, Enum)
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -12,16 +13,20 @@ from app.core.database import Base
 
 
 class Gender(enum.Enum):
+    """enumeration of gender types"""
     MALE = "M"
     FEMALE = "F"
 
+
 class Federation(enum.Enum):
+    """e,umeration of possible federations"""
     FFC = "FFC"
     FSGT = "FSGT"
-    FFVelo = "FFVélo"
+    FFVELO = "FFVélo"
 
 
 class Member(Base):
+    """Class representing member model"""
     __tablename__ = "members"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -43,6 +48,7 @@ class Member(Base):
 
 
 class License(Base):
+    """Class representing license model"""
     __tablename__ = "licenses"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -50,7 +56,12 @@ class License(Base):
     federation = Column(Enum(Federation))
     number = Column(Integer)
 
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(),
+                        onupdate=func.now())
+
     member_id = Column(Integer, ForeignKey("members.id"))
     member = relationship("Member", back_populates="licenses")
 
-    # TODO: add created_at, updtaed_at and __str__
+    def __str__(self):
+        return self.federation + " " + self.number

@@ -16,26 +16,40 @@ class MemberBase(BaseModel):
     birthdate: date
     gender: Gender
 
+
 class Member(MemberBase):
-    # Class containing all member data
+    """Class containing all member data"""
     id: int
     created_at: datetime
     updated_at: datetime
 
+
 class MemberCreate(MemberBase):
     """Class for member creation"""
-    pass
+
 
 class MemberUpdate(MemberBase):
     """Class for member update"""
-    pass
+
 
 class LicenseBase(BaseModel):
+    """Class containing base data for a license"""
     federation: Federation
     number: int
 
+
+class License(LicenseBase):
+    """Class containing all license data"""
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+
 class LicenseCreate(LicenseBase):
+    """Class for license creation"""
     member_id: int
 
+
 class MemberWithLicenses(MemberBase):
+    """Class to retrieve a member with hbis licenses"""
     licenses: List[LicenseBase] = []

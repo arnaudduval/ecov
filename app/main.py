@@ -21,8 +21,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(members_views, tags=["Members"])
 
-#@app.get("/", include_in_schema=False)
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def root(request: Request):
     return templates.TemplateResponse(
         request,
