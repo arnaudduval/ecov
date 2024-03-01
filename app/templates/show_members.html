@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Liste des membres
+{% endblock %}
+
+{% block content %}
+    <h1>Liste des membres</h1>
+    <ul>
+        {% for member in members %}
+        <li>{{ member.id }} - {{ member.first_name }} {{ member.last_name }}</li>
+        {% endfor %}
+    </ul>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
+        {% for member in members %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header">{{ member.last_name }} {{ member.first_name }}</div>
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">{{ member.birthdate.strftime('%d/%m/%Y') }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}

@@ -24,13 +24,15 @@ members_views = APIRouter()
 
 # Get all members
 @members_views.get("/members/")
-def list_members(db: Session = Depends(get_db)):
+async def list_members(db: Session = Depends(get_db)):
+    """List all members (API)"""
     members = db.query(Member).all()
     return members
 
-# Create a teacher
+
 @members_views.post("/members/", status_code=status.HTTP_201_CREATED)
-def create_member(member: MemberCreate, db: Session = Depends(get_db)):
+async def create_member(member: MemberCreate, db: Session = Depends(get_db)):
+    """Create a new member (API)"""
     db_member = Member(**member.dict())
     db.add(db_member)
     db.commit()
@@ -39,7 +41,8 @@ def create_member(member: MemberCreate, db: Session = Depends(get_db)):
 
 # Create a License for a Member
 @members_views.post("/licenses/", status_code=status.HTTP_201_CREATED)
-def create_license(license_data: LicenseCreate, db: Session = Depends(get_db)):
+async def create_license(license_data: LicenseCreate, db: Session = Depends(get_db)):
+    """Create a new license for a member (API)"""
     db_license = License(**license_data.dict())
     db.add(db_license)
     db.commit()
@@ -49,21 +52,24 @@ def create_license(license_data: LicenseCreate, db: Session = Depends(get_db)):
 
 # Read all subject from teacher id
 @members_views.get("/member/{member_id}/alllicenses", response_model=MemberWithLicenses)
-def read_member_with_licenses(*, member_id: int, db: Session = Depends(get_db)):
+async def read_member_with_licenses(*, member_id: int, db: Session = Depends(get_db)):
+    """Get all licenses for a given member id"""
     member = db.get(Member, member_id)
     if not member:
         raise HTTPException(status_code=404, detail="member not found")
     return member
 
 @members_views.get("/members/create/", include_in_schema=False)
-async def member_create(request: Request,
+async def member_create_display(request: Request,
                         db: Session = Depends(get_db)):
+    """Display form to create a new member"""
     return templates.TemplateResponse("create_member.html",
                                       {"request": request})
 
 @members_views.post("/members/create/", include_in_schema=False)
-async def member_create(request: Request,
+async def member_create_handle(request: Request,
                         db: Session = Depends(get_db)):
+    """Handle form to create a new member"""
     form = MemberCreateForm(request)
     await form.load_data()
     if form.is_valid():
@@ -82,7 +88,19 @@ async def member_create(request: Request,
             form.__dict__.get("errors").append(
                 "You might not be logged in."
             )
+            # TODO: return somethiong specific
 
     return templates.TemplateResponse(request,
                                       "create_member.html",
                                        {"errors": form.errors})
+
+@members_views.get("/members/all/", include_in_schema=False, response_model=List[MemberSchema])
+async def list_members_display(request: Request, db: Session = Depends(get_db)):
+    """List all members for display"""
+    members = db.query(Member).all()
+
+
+    return templates.TemplateResponse(request,
+                                      "show_members.html",
+                                      {"members": members})
+
